@@ -1,27 +1,38 @@
-import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
+import {type SomeCompanionConfigField } from '@companion-module/base'
 
-export interface ModuleConfig {
-	host: string
-	port: number
+export interface EasyRecordCGConfig {
+	competitionCode: string 
+	channelName: string
+	channelId: number
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
+			id: 'username',
 			type: 'textinput',
-			id: 'host',
-			label: 'Target IP',
-			width: 8,
-			regex: Regex.IP,
+			label: 'Username',
+			width: 2
 		},
 		{
-			type: 'number',
-			id: 'port',
-			label: 'Target Port',
-			width: 4,
-			min: 1,
-			max: 65535,
-			default: 8000,
+			id: 'password',
+			type: 'textinput',
+			label: 'Password',
+			width: 2
+		},
+		{
+			id: 'blank1',
+			type: 'static-text',
+			label: '',
+			value: '',
+			width: 5
+		},
+		{
+			id: 'competitionCode',
+			type: 'textinput',
+			label: 'Competition code',
+			width: 4
 		},
 	]
 }
+  

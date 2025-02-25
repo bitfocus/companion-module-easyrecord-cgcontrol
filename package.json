@@ -1,29 +1,31 @@
 {
-	"name": "your-module-name",
+	"name": "easyrecord-cgcontrol",
 	"version": "0.1.0",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
 		"postinstall": "husky",
 		"format": "prettier -w .",
-		"package": "run build && companion-module-build",
-		"build": "rimraf dist && run build:main",
+		"package": "yarn build && companion-module-build",
+		"build": "rimraf dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"dev": "tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",
-		"lint": "run lint:raw ."
+		"lint": "yarn lint:raw ."
 	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-your-module-name.git"
+		"url": "git+https://github.com/bitfocus/companion-module-easyrecord-cgcontrol.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.11.2"
+		"@companion-module/base": "~1.11.2",
+		"ws": "^8.18.1"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.1.1",
 		"@types/node": "^22.10.2",
+		"@types/ws": "^8.5.14",
 		"eslint": "^9.17.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^15.2.11",
@@ -41,5 +43,5 @@
 			"yarn lint:raw --fix"
 		]
 	},
-	"packageManager": "yarn@4.5.3"
+	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

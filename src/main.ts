@@ -1,19 +1,23 @@
 import { InstanceBase, runEntrypoint, InstanceStatus, SomeCompanionConfigField } from '@companion-module/base'
-import { GetConfigFields, type ModuleConfig } from './config.js'
+import { GetConfigFields, type EasyRecordCGConfig } from './config.js'
 import { UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
+import { EasyRecordCGConnection } from './connection.js'
 
-export class ModuleInstance extends InstanceBase<ModuleConfig> {
-	config!: ModuleConfig // Setup in init()
+export class EasyRecordCGInstance extends InstanceBase<EasyRecordCGConfig> {
+	config!: EasyRecordCGConfig
+	conn!: EasyRecordCGConnection
 
 	constructor(internal: unknown) {
 		super(internal)
 	}
 
-	async init(config: ModuleConfig): Promise<void> {
+	async init(config: EasyRecordCGConfig): Promise<void> {
 		this.config = config
+		this.conn = new EasyRecordCGConnection()
+		this.conn.connect(this.config.competitionCode)
 
 		this.updateStatus(InstanceStatus.Ok)
 
@@ -26,7 +30,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		this.log('debug', 'destroy')
 	}
 
-	async configUpdated(config: ModuleConfig): Promise<void> {
+	async configUpdated(config: EasyRecordCGConfig): Promise<void> {
 		this.config = config
 	}
 
@@ -48,4 +52,4 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	}
 }
 
-runEntrypoint(ModuleInstance, UpgradeScripts)
+runEntrypoint(EasyRecordCGInstance, UpgradeScripts)

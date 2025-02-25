@@ -1,16 +1,16 @@
 {
-	"id": "your-module-name",
-	"name": "your-module-name",
-	"shortname": "module-shortname",
-	"description": "A short one line description of your module",
+	"id": "easyrecord-cgcontrol",
+	"name": "easyrecord-cgcontrol",
+	"shortname": "easyrecord",
+	"description": "CG control for easyrecord, www.easyrecord.se",
 	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-your-module-name.git",
-	"bugs": "https://github.com/bitfocus/companion-module-your-module-name/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-easyrecord-cgcontrol.git",
+	"bugs": "https://github.com/bitfocus/companion-module-easyrecord-cgcontrol/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Johan Falkenström",
+			"email": "johan.falkenstrom@gmail.com"
 		}
 	],
 	"runtime": {
@@ -20,7 +20,7 @@
 		"entrypoint": "../dist/main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
+	"manufacturer": "Easyrecord",
+	"products": [ "Easyrecord CG control" ],
 	"keywords": []
 }
