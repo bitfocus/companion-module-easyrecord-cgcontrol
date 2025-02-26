@@ -17,7 +17,7 @@ export function UpdateActions(self: EasyRecordCGInstance): void {
 					id: 'cmd',
 					type: 'dropdown',
 					label: 'Command',
-					choices: getCommandChoices(),
+					choices: [...getCommandChoices(), { id: 'toggle', label: 'Toggle' }],
 					default: getCommandChoices()[0].id,
 				},
 			],
@@ -26,7 +26,10 @@ export function UpdateActions(self: EasyRecordCGInstance): void {
 				const displayId = Number(disp)
 				if (event.options.cmd === 'play') await self.conn.play(displayId)
 				else if (event.options.cmd === 'stop') await self.conn.stop(displayId)
-				else if (event.options.cmd === 'update') await self.conn.update(displayId)
+				else if (event.options.cmd === 'toggle') {
+					if (self.conn.getState().isPlaying[disp]) await self.conn.stop(displayId)
+					else await self.conn.play(displayId)
+				} else if (event.options.cmd === 'update') await self.conn.update(displayId)
 				else if (event.options.cmd === 'next') await self.conn.next(displayId)
 			},
 		},

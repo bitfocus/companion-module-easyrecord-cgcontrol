@@ -4,7 +4,7 @@ import type { EasyRecordCGInstance } from './main.js'
 export function UpdateFeedbacks(self: EasyRecordCGInstance): void {
 	self.setFeedbackDefinitions({
 		ChannelState: {
-			name: 'Example Feedback',
+			name: 'Display is currently playing',
 			type: 'boolean',
 			defaultStyle: {
 				bgcolor: combineRgb(255, 0, 0),
@@ -12,21 +12,15 @@ export function UpdateFeedbacks(self: EasyRecordCGInstance): void {
 			},
 			options: [
 				{
-					id: 'num',
-					type: 'number',
-					label: 'Test',
-					default: 5,
-					min: 0,
-					max: 10,
+					id: 'displayId',
+					type: 'textinput',
+					label: 'Display ID',
+					default: '999',
 				},
 			],
-			callback: (feedback) => {
-				console.log('Hello world!', feedback.options.num)
-				if (Number(feedback.options.num) > 5) {
-					return true
-				} else {
-					return false
-				}
+			callback: (event, context) => {
+				const disp = context.parseVariablesInString(String(event.options.displayId!))
+				return self.conn.getState().isPlaying[Number(disp)]
 			},
 		},
 	})

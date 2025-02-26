@@ -1,21 +1,25 @@
 import { WebSocket } from 'ws'
-import { EasyRecordCGBackground } from './enums.js'
+import { EasyRecordCGBackground, EasyRecordCGCmdType } from './enums.js'
+import { type EasyRecordCGCmd, type EasyRecordCGState } from './types.js'
 
-const enum CmdType {
-	Control = 'displayControl',
-}
-
-type EasyRecordCGCmd = {
-	type: string
-	display: string
-	command: string
-}
+type onCbkType = (key: string, value: any) => void
 
 export class EasyRecordCGConnection {
 	#conn!: WebSocket
 	#competitionCode!: string
+	#state: EasyRecordCGState
 
-	constructor() {}
+	#registeredHandlers: any = { stateUpdated: [] }
+	constructor() {
+		this.#state = {
+			isPlaying: {},
+			background: EasyRecordCGBackground.Transparent,
+		}
+	}
+
+	on(event: string, fun: onCbkType): void {
+		this.#registeredHandlers[event].push(fun)
+	}
 
 	async connect(competitionCode: string): Promise<void> {
 		this.#competitionCode = competitionCode
@@ -43,21 +47,33 @@ export class EasyRecordCGConnection {
 		})
 	}
 
+	getState(): EasyRecordCGState {
+		return this.#state
+	}
+
 	async send(cmd: string): Promise<void> {
 		this.#conn.send(cmd)
 	}
 
 	async play(displayId: number): Promise<void> {
+		// This should be as a reaction from server, this is not implemented serverside
+		this.#state.isPlaying[displayId] = true
+		this.#registeredHandlers['stateUpdated'].forEach((fun) => fun('isPlaying', this.#state.isPlaying))
+
 		await this.#sendCmd({
-			type: CmdType.Control,
+			type: EasyRecordCGCmdType.Control,
 			display: this.#getDisplayString(displayId),
 			command: 'play()',
 		})
 	}
 
 	async stop(displayId: number): Promise<void> {
+		// This should be as a reaction from server, this is not implemented serverside
+		this.#state.isPlaying[displayId] = false
+		this.#registeredHandlers['stateUpdated'].forEach((fun) => fun('isPlaying', this.#state.isPlaying))
+
 		await this.#sendCmd({
-			type: CmdType.Control,
+			type: EasyRecordCGCmdType.Control,
 			display: this.#getDisplayString(displayId),
 			command: 'stop()',
 		})
@@ -65,7 +81,7 @@ export class EasyRecordCGConnection {
 
 	async update(displayId: number): Promise<void> {
 		await this.#sendCmd({
-			type: CmdType.Control,
+			type: EasyRecordCGCmdType.Control,
 			display: this.#getDisplayString(displayId),
 			command: 'update()',
 		})
@@ -73,15 +89,19 @@ export class EasyRecordCGConnection {
 
 	async next(displayId: number): Promise<void> {
 		await this.#sendCmd({
-			type: CmdType.Control,
+			type: EasyRecordCGCmdType.Control,
 			display: this.#getDisplayString(displayId),
 			command: 'next()',
 		})
 	}
 
 	async setBackground(displayId: number, background: EasyRecordCGBackground): Promise<void> {
+		// This should be as a reaction from server, this is not implemented serverside
+		this.#state.background = background
+		this.#registeredHandlers['stateUpdated'].forEach((fun) => fun('background', this.#state.background))
+
 		await this.#sendCmd({
-			type: CmdType.Control,
+			type: EasyRecordCGCmdType.Control,
 			display: this.#getDisplayString(displayId),
 			command: 'background("' + background + '")',
 		})

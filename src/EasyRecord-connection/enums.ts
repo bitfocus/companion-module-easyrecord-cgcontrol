@@ -5,9 +5,13 @@ export const enum EasyRecordCGBackground {
 	Image = 'image',
 }
 
-export const enum EasyRecordCGCommands {
+export const enum EasyRecordCGCommand {
 	Play = 'play',
 	Stop = 'stop',
 	Update = 'update',
 	Next = 'next',
+}
+
+export const enum EasyRecordCGCmdType {
+	Control = 'displayControl',
 }

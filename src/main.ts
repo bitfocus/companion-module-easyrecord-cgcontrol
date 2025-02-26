@@ -17,6 +17,9 @@ export class EasyRecordCGInstance extends InstanceBase<EasyRecordCGConfig> {
 	async init(config: EasyRecordCGConfig): Promise<void> {
 		this.config = config
 		this.conn = new EasyRecordCGConnection()
+		this.conn.on('stateUpdated', () => {
+			this.checkFeedbacks()
+		})
 		await this.conn.connect(this.config.competitionCode)
 
 		this.updateStatus(InstanceStatus.Ok)
