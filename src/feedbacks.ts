@@ -18,8 +18,8 @@ export function UpdateFeedbacks(self: EasyRecordCGInstance): void {
 					default: '999',
 				},
 			],
-			callback: (event, context) => {
-				const disp = context.parseVariablesInString(String(event.options.displayId!))
+			callback: async (event, context) => {
+				const disp = await context.parseVariablesInString(String(event.options.displayId!))
 				return self.conn.getState().isPlaying[Number(disp)]
 			},
 		},

@@ -4,7 +4,7 @@ import { UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
-import { EasyRecordCGConnection } from './EasyRecord-connection/index.js'
+import { EasyRecordCGConnection, type EasyRecordCGState } from './EasyRecord-connection/index.js'
 
 export class EasyRecordCGInstance extends InstanceBase<EasyRecordCGConfig> {
 	config!: EasyRecordCGConfig
@@ -17,7 +17,7 @@ export class EasyRecordCGInstance extends InstanceBase<EasyRecordCGConfig> {
 	async init(config: EasyRecordCGConfig): Promise<void> {
 		this.config = config
 		this.conn = new EasyRecordCGConnection()
-		this.conn.on('stateUpdated', () => {
+		this.conn.on('stateChanged', (_newState: EasyRecordCGState, _paths: string[]) => {
 			this.checkFeedbacks()
 		})
 		await this.conn.connect(this.config.competitionCode)
