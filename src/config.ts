@@ -1,7 +1,7 @@
-import {type SomeCompanionConfigField } from '@companion-module/base'
+import { type SomeCompanionConfigField } from '@companion-module/base'
 
 export interface EasyRecordCGConfig {
-	competitionCode: string 
+	competitionCode: string
 	channelName: string
 	channelId: number
 }
@@ -12,27 +12,26 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			id: 'username',
 			type: 'textinput',
 			label: 'Username',
-			width: 2
+			width: 2,
 		},
 		{
 			id: 'password',
 			type: 'textinput',
 			label: 'Password',
-			width: 2
+			width: 2,
 		},
 		{
 			id: 'blank1',
 			type: 'static-text',
 			label: '',
 			value: '',
-			width: 5
+			width: 5,
 		},
 		{
 			id: 'competitionCode',
 			type: 'textinput',
 			label: 'Competition code',
-			width: 4
+			width: 4,
 		},
 	]
 }
-  
