@@ -1,10 +1,11 @@
 import type { EasyRecordCGInstance } from './main.js'
 import type { EasyRecordCGBackground } from './EasyRecord-connection/index.js'
 import { getBackgroundChoices, getCommandChoices } from './choices.js'
+import { actionId } from './actionId.js'
 
-export function UpdateActions(self: EasyRecordCGInstance): void {
-	self.setActionDefinitions({
-		control_action: {
+export function UpdateActions(instance: EasyRecordCGInstance): void {
+	instance.setActionDefinitions({
+		[actionId.ControlAction]: {
 			name: 'Control',
 			options: [
 				{
@@ -24,16 +25,16 @@ export function UpdateActions(self: EasyRecordCGInstance): void {
 			callback: async (event, context) => {
 				const disp = await context.parseVariablesInString(String(event.options.displayId!))
 				const displayId = Number(disp)
-				if (event.options.cmd === 'play') await self.conn.play(displayId)
-				else if (event.options.cmd === 'stop') await self.conn.stop(displayId)
+				if (event.options.cmd === 'play') await instance.conn.play(displayId)
+				else if (event.options.cmd === 'stop') await instance.conn.stop(displayId)
 				else if (event.options.cmd === 'toggle') {
-					if (self.conn.getState().isPlaying[disp]) await self.conn.stop(displayId)
-					else await self.conn.play(displayId)
-				} else if (event.options.cmd === 'update') await self.conn.update(displayId)
-				else if (event.options.cmd === 'next') await self.conn.next(displayId)
+					if (instance.state.channel[disp].playing) await instance.conn.stop(displayId)
+					else await instance.conn.play(displayId)
+				} else if (event.options.cmd === 'update') await instance.conn.update(displayId)
+				else if (event.options.cmd === 'next') await instance.conn.next(displayId)
 			},
 		},
-		background_action: {
+		[actionId.BackgroundAction]: {
 			name: 'Background',
 			options: [
 				{
@@ -52,7 +53,7 @@ export function UpdateActions(self: EasyRecordCGInstance): void {
 			],
 			callback: async (event, context) => {
 				const displayid = await context.parseVariablesInString(String(event.options.displayId!))
-				await self.conn.setBackground(Number(displayid), <EasyRecordCGBackground>event.options.background!)
+				await instance.conn.setBackground(Number(displayid), <EasyRecordCGBackground>event.options.background!)
 			},
 		},
 	})

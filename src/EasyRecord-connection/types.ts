@@ -1,8 +1,12 @@
 import { type EasyRecordCGCmdType, type EasyRecordCGBackground } from './enums.js'
 
-export type EasyRecordCGState = {
-	isPlaying: { [key: string]: boolean }
-	background: EasyRecordCGBackground
+export interface EasyRecordCGState {
+	channel: {
+		[key: string]: {
+			playing: boolean
+			background: EasyRecordCGBackground
+		}
+	}
 }
 
 export type EasyRecordCGCmd = {

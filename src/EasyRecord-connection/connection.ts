@@ -2,9 +2,13 @@ import { WebSocket } from 'ws'
 import { EventEmitter } from 'eventemitter3'
 import { EasyRecordCGBackground, EasyRecordCGCmdType } from './enums.js'
 import { type EasyRecordCGCmd, type EasyRecordCGState } from './types.js'
+import * as State from './state.js'
 
-export type EasyRecordCGEvents = {
+type EasyRecordCGEvents = {
 	stateChanged: [EasyRecordCGState, string[]]
+	disconnected: []
+	connected: []
+	error: [string]
 }
 
 export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
@@ -14,10 +18,7 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 
 	constructor() {
 		super()
-		this.#state = {
-			isPlaying: {},
-			background: EasyRecordCGBackground.Transparent,
-		}
+		this.#state = State.Create()
 	}
 
 	async connect(competitionCode: string): Promise<void> {
@@ -26,11 +27,9 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 		// channel id can be any number, just as long as it is there
 		const url = 'wss://easyrecord.se:8081?' + this.#competitionCode + '&name=CompanionCGModule' + '&id=999&type=11'
 
-		console.log('debug', 'Trying to connect to ' + url)
 		this.#conn = new WebSocket(url)
 		this.#conn.on('open', () => {
-			console.log('info', 'Connected to CG server!')
-			console.log('debug', url)
+			this.emit('connected')
 		})
 
 		this.#conn.on('message', (message) => {
@@ -38,26 +37,18 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 		})
 
 		this.#conn.on('error', (error) => {
-			console.log('error', `Error occurred: ${error}`)
+			this.emit('error', error)
 		})
 
 		this.#conn.on('close', () => {
-			console.log('info', 'Client disconnected')
+			this.emit('disconnected')
 		})
-	}
-
-	getState(): EasyRecordCGState {
-		return this.#state
-	}
-
-	async send(cmd: string): Promise<void> {
-		this.#conn.send(cmd)
 	}
 
 	async play(displayId: number): Promise<void> {
 		// This should be as a reaction from server, this is not implemented serverside
-		this.#state.isPlaying[displayId] = true
-		this.emit('stateChanged', this.#state, ['isPlaying.' + displayId])
+		this.#state.channel[displayId].playing = true
+		this.emit('stateChanged', this.#state, ['display.' + displayId + '.playing'])
 
 		await this.#sendCmd({
 			type: EasyRecordCGCmdType.Control,
@@ -68,8 +59,8 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 
 	async stop(displayId: number): Promise<void> {
 		// This should be as a reaction from server, this is not implemented serverside
-		this.#state.isPlaying[displayId] = false
-		this.emit('stateChanged', this.#state, ['isPlaying.' + displayId])
+		this.#state.channel[displayId].playing = false
+		this.emit('stateChanged', this.#state, ['display.' + displayId + '.playing'])
 
 		await this.#sendCmd({
 			type: EasyRecordCGCmdType.Control,
@@ -96,8 +87,8 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 
 	async setBackground(displayId: number, background: EasyRecordCGBackground): Promise<void> {
 		// This should be as a reaction from server, this is not implemented serverside
-		this.#state.background = background
-		this.emit('stateChanged', this.#state, ['background.' + displayId])
+		this.#state.channel[displayId].background = background
+		this.emit('stateChanged', this.#state, ['display.' + displayId + '.background'])
 
 		await this.#sendCmd({
 			type: EasyRecordCGCmdType.Control,
@@ -112,7 +103,6 @@ export class EasyRecordCGConnection extends EventEmitter<EasyRecordCGEvents> {
 
 	async #sendCmd(cmd: EasyRecordCGCmd): Promise<void> {
 		const json = JSON.stringify(cmd)
-		console.log('SEND', json)
 		this.#conn.send(json)
 	}
 }
