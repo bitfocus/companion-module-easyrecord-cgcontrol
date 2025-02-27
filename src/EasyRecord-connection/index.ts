@@ -4,4 +4,3 @@ import { EasyRecordCGBackground, EasyRecordCGCommand } from './enums.js'
 import { EasyRecordCGConnection } from './connection.js'
 
 export { EasyRecordCGStateUtil, EasyRecordCGState, EasyRecordCGBackground, EasyRecordCGCommand, EasyRecordCGConnection }
-
